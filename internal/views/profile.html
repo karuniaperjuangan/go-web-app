@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>User Profile</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/mustache@latest"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/client-side-templates.js"></script>
+    <script>
+        document.addEventListener('htmx:configRequest', function(evt) {
+            const token = localStorage.getItem('jwt_token');
+            if (token) {
+                evt.detail.headers['Authorization'] = 'Bearer ' + token;
+            } else {
+                // if no token, redirect to login
+                window.location.href = '/view/login';
+            }
+        });
+    </script>
+</head>
+<body hx-ext="client-side-templates">
+    <h1>User Profile</h1>
+
+    <div hx-get="/api/user" 
+         hx-trigger="load" 
+         mustache-template="profile-template">
+        Loading profile...
+    </div>
+
+    <template id="profile-template">
+        <p><strong>ID:</strong> {{id}}</p>
+        <p><strong>Username:</strong> {{username}}</p>
+    </template>
+
+    <button onclick="logout()">Logout</button>
+
+    <script>
+        function logout() {
+            localStorage.removeItem('jwt_token');
+            window.location.href = '/view/login';
+        }
+    </script>
+</body>
+</html>

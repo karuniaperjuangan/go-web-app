@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script>
+        document.addEventListener('htmx:afterOnLoad', function(evt) {
+            if (evt.detail.xhr.responseURL.endsWith('/login') && evt.detail.xhr.status === 200) {
+                try {
+                    const response = JSON.parse(evt.detail.xhr.responseText);
+                    if (response.token) {
+                        localStorage.setItem('jwt_token', response.token);
+                        window.location.href = '/view/profile';
+                    }
+                } catch (e) {
+                    console.error("Could not parse response from /login:", e);
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Login</h1>
+    <form hx-post="/login" hx-target="#response" hx-swap="innerHTML">
+        <div>
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" required>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+    <div id="response"></div>
+    <p>Don't have an account? <a href="/view/register">Register</a></p>
+</body>
+</html>
