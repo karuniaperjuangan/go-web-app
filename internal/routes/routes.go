@@ -22,6 +22,8 @@ func InitRoutes(app *fiber.App) {
 		return handler.Login(c, cfg.JWTSecret)
 	})
 
+	app.Post("/chat", handler.GetSimpleChatResponse)
+
 	api := app.Group("/api", middleware.AuthRequired(cfg.JWTSecret))
 	api.Get("/user", handler.GetUserProfile)
 
